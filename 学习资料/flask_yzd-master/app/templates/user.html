@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="jumbotron">
+    <h2>
+        你好，{{ user.nickname }}
+    </h2>
+    <p>
+        提醒邮箱: {{ user.email }}
+    </p>
+</div>
+<div class="btn-group">
+    <a class="btn btn-default" href="{{ url_for('addmonitoritem', user_id = current_user.id) }}">添加监控商品</a>
+</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                商品ID
+            </th>
+            <th>
+                商品名称
+            </th>
+            <th>
+                商品价格
+            </th>
+            <th>
+                期望价格
+            </th>
+            <th>
+                所属商城
+            </th>
+            <th>
+                备注
+            </th>
+            <th>
+                添加时间
+            </th>
+            <th>
+                监控状态
+            </th>
+            <th>
+                监控开关
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for item in all_item %}
+        {% if not item.status %}
+        <tr class="danger">
+        {% else %}
+        <tr class="info">
+        {% endif %}
+            <td>
+                {{ item.item_id }}
+            </td>
+            <td width="300">
+                <a href="http://item.jd.com/{{ item.item_id }}.html">{{ item.item_name }}</a>
+            </td>
+            <td>
+                {{ item.item_price }}
+            </td>
+            <td>
+                {{ item.user_price }}
+            </td>
+            <td>
+                {% if item.mall_id == 1 %}
+                JD商城
+                {% else %}
+                TM商城
+                {% endif %}
+            </td>
+            <td width="100">
+                {{ item.note }}
+            </td>
+            <td>
+                {{ item.add_date.strftime("%c") }}
+            </td>
+            <td>
+                {% if item.status == True %}
+                正在监控
+                {% else %}
+                停止监控
+                {% endif %}
+            </td>
+            <td>
+                <div class="btn-group">
+                    <a class="btn btn-default" href="{{ url_for('on_item', item_id = item.id, user_id = current_user.id) }}">开</a>
+                    <a class="btn btn-default" href="{{ url_for('off_item', item_id = item.id, user_id = current_user.id) }}">关</a>
+                    <a class="btn btn-default" href="{{ url_for('delete_item', item_id = item.id, user_id = current_user.id) }}">删除</a>
+                </div>
+            </td>
+        </tr>
+     {% endfor %}
+    </tbody>
+</table>
+<div class="alert alert-success alert-dismissable">
+     <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h4>
+        小贴士：
+    </h4> 一旦商品价格低于预期价格，您便会收到一封提醒邮件。<b>当前监控使用的代理可用性不佳，导致监控效率低，正在改善代理池中！</b></a>
+</div>
+<div class="row clearfix">
+		<div class="col-md-12 column">
+            <br>
+                <br><br><br><br><br>
+            </p>
+        </div>
+</div>
+{% endblock %}
